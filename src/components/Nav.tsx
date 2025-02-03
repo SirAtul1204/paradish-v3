@@ -1,4 +1,4 @@
-import { SignedIn, UserButton, UserProfile } from "@clerk/nextjs";
+import { SignedIn, UserButton } from "@clerk/nextjs";
 import Switch from "./Switch";
 
 const Nav = () => {
