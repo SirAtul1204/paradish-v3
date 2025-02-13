@@ -15,7 +15,11 @@ jobs:
       - name: Install dependencies & tooling
         run: |
           npm install
-          npm install -g drizzle-orm drizzle-kit pg
+          install -g drizzle-orm drizzle-kit pg
+      - name: Generate .env
+        run: |
+          touch .env
+          echo DATABASE_URL={{secrets.DATABASE_URL}} >> .env
       - name: Apply migrations
         run: drizzle-kit migrate
         env:
