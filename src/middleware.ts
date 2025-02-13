@@ -1,18 +1,46 @@
-import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
+import { betterFetch } from "@better-fetch/fetch";
+import type { auth } from "@/lib/auth";
+import { NextRequest, NextResponse } from "next/server";
 
-const isPublicRoute = createRouteMatcher(["/login(.*)", "/register(.*)", "/"]);
+type Session = typeof auth.$Infer.Session;
 
-export default clerkMiddleware(async (auth, request) => {
-  if (!isPublicRoute(request)) {
-    await auth.protect();
+const authRoutes = ["/register", "/login"];
+const publicRoutes = ["/"];
+const userTypeRoutes = ["/user-type"];
+
+export default async function authMiddleware(request: NextRequest) {
+  const pathName = request.nextUrl.pathname;
+  const isAuthRoutes = authRoutes.includes(pathName);
+  const isPublicRoutes = publicRoutes.includes(pathName);
+  const isUserTypeRoutes = userTypeRoutes.includes(pathName);
+
+  const { data: session } = await betterFetch<Session>(
+    "/api/auth/get-session",
+    {
+      baseURL: request.nextUrl.origin,
+      headers: {
+        //get the cookie from the request
+        cookie: request.headers.get("cookie") || "",
+      },
+    }
+  );
+
+  if (!session) {
+    if (isAuthRoutes || isPublicRoutes) {
+      return NextResponse.next();
+    }
+    return NextResponse.redirect(new URL("/login", request.url));
   }
-});
+
+  return NextResponse.next({
+    headers: {
+      userId: session.user.id,
+      userEmail: session.user.email,
+      userName: session.user.name,
+    },
+  });
+}
 
 export const config = {
-  matcher: [
-    // Skip Next.js internals and all static files, unless found in search params
-    "/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)",
-    // Always run for API routes
-    "/(api|trpc)(.*)",
-  ],
+  matcher: ["/((?!api|_next/static|_next/image|.*\\.png$|.*\\.svg$).*)"],
 };
