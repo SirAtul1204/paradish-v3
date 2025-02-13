@@ -21,6 +21,8 @@ jobs:
           touch .env
           echo DATABASE_URL={{secrets.DATABASE_URL}} >> .env
       - name: Apply migrations
-        run: drizzle-kit migrate
+        run: |
+          drizzle-kit generate
+          drizzle-kit migrate
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
