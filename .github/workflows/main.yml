@@ -15,7 +15,7 @@ jobs:
       - name: Install dependencies & tooling
         run: |
           npm install
-          install -g drizzle-orm drizzle-kit pg
+          npm install -g drizzle-orm drizzle-kit pg
       - name: Generate .env
         run: |
           touch .env
