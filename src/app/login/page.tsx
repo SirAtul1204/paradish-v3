@@ -46,7 +46,7 @@ const Login = () => {
         <FormInput label="Password" name="password" type="password" required />
         <Button type="submit">Sign up</Button>
         <p className="text-sm text-center">
-          Don't have an account?{" "}
+          Don&apos;t have an account?{" "}
           <Link
             href="/register"
             className="text-secondary underline cursor-pointer"
