@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { Roboto } from "next/font/google";
 import "./globals.css";
 import Nav from "@/components/Nav";
-import { ClerkProvider } from "@clerk/nextjs";
 
 const roboto = Roboto({
   variable: "--font-roboto",
@@ -21,15 +20,15 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <ClerkProvider>
-      <html lang="en" className="dark">
-        <body
-          className={`${roboto.variable} antialiased bg-background text-foreground max-w-7xl mx-auto`}
-        >
-          <Nav />
+    <html lang="en" className="dark">
+      <body
+        className={`${roboto.variable} antialiased bg-background text-foreground max-w-7xl mx-auto flex flex-col min-h-screen`}
+      >
+        <Nav />
+        <div className="flex-grow flex items-center justify-center">
           {children}
-        </body>
-      </html>
-    </ClerkProvider>
+        </div>
+      </body>
+    </html>
   );
 }

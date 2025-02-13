@@ -19,6 +19,7 @@ export default {
         primaryLight: "#CADABF",
         secondary: "#BC9F8B",
         secondaryForeground: "#fff",
+        disabled: "#718096",
       },
       dark: {
         background: "#212121",
@@ -27,6 +28,7 @@ export default {
         primaryLight: "#C890A7",
         secondary: "#FBF5E5",
         secondaryForeground: "#000",
+        disabled: "#4a5568",
       },
     }),
   ],

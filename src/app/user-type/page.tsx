@@ -1,5 +1,3 @@
-const UserType = () => {
-  return <div>User Type</div>;
-};
+import UserType from "./UserType";
 
 export default UserType;
