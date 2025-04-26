@@ -1,6 +1,51 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 @theme {
-  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif,
-    "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  --color-primary: #ff6b35;
+  --color-secondary: #d88c65;
+
+  --color-primary-text: #333333;
+  --color-secondary-text: #666666;
+
+  --color-btn-primary-text: #ffffff;
+  --color-btn-secondary-text: #ffffff;
+  --color-btn-disabled-bg: #e0e0e0;
+  --color-btn-disabled-text: #9e9e9e;
+
+  --color-background: #fdfdfd;
+  --color-surface: #f4f4f4;
+  --color-border: #e0e0e0;
+
+  --color-success: #4caf50;
+  --color-warning: #ff9800;
+  --color-error: #f44336;
+}
+
+@layer base {
+  @variant dark {
+    --color-primary: #ff884d;
+    --color-secondary: #f2b998;
+
+    --color-primary-text: #ffffff;
+    --color-secondary-text: #bbbbbb;
+
+    --color-btn-primary-text: #1a1a1a;
+    --color-btn-secondary-text: #1a1a1a;
+    --color-btn-disabled-bg: #2c2c2c;
+    --color-btn-disabled-text: #666666;
+
+    --color-background: #121212;
+    --color-surface: #1e1e1e;
+    --color-border: #2c2c2c;
+
+    --color-success: #81c784;
+    --color-warning: #ffb74d;
+    --color-error: #e57373;
+  }
+}
+
+body {
+  font-family: var(--font-roboto);
 }

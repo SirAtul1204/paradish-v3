@@ -70,7 +70,7 @@ export const userRestaurant = pgTable("user_restaurant", {
   restaurantId: integer("restaurant_id")
     .notNull()
     .references(() => restaurant.id, { onDelete: "cascade" }),
-  role: text("role").notNull(),
+  role: text("role", { enum: ["OWNER"] }).notNull(),
 });
 
 export const userRelations = relations(user, ({ many }) => ({
