@@ -23,7 +23,7 @@ export default function CreateForm() {
 
   useEffect(() => {
     if (isSuccess) {
-      toast.success(data!.message);
+      toast.success(data.message);
       router.push(ROUTES.SELECT_RESTAURANT);
     }
   }, [isSuccess]);

@@ -20,7 +20,7 @@ const WelcomeEmail = ({ userName }: { userName: string }) => {
           <Container align="left">
             <Column>
               <Row>
-                <Heading className="text-xl text-black font-medium">
+                <Heading className="text-xl font-medium text-black">
                   Welcome to Paradish
                 </Heading>
               </Row>
@@ -85,5 +85,7 @@ export const sendEmail = ({ to, emailType, userName }: SendEmail) => {
       subject: getSubject(emailType),
       react: getEmail(emailType, userName),
     })
-    .catch((e) => {});
+    .catch((e) => {
+      console.log("Error", e);
+    });
 };

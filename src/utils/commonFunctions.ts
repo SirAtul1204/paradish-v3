@@ -1,4 +1,4 @@
-export const getRecordFromFormData = <T extends Record<string, any>>(
+export const getRecordFromFormData = <T extends Record<string, string>>(
   formData: FormData,
 ): T => {
   const record = {} as T;

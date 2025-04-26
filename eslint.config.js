@@ -43,6 +43,8 @@ export default tseslint.config(
       "error",
       { drizzleObjectName: ["db", "ctx.db"] },
     ],
+    "@next/next/no-img-element": "off",
+    "react-hooks/exhaustive-deps": "off",
   },
   },
   {

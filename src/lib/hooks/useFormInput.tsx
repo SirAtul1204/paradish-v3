@@ -1,13 +1,7 @@
 import { useState, type ChangeEvent } from "react";
 
-type UseFormInputProps = {
-  // should return true if val is valid
-  //   validator?: (val: string) => boolean;
-};
-
-export default function useFormInput(props?: UseFormInputProps) {
+export default function useFormInput() {
   const [val, setVal] = useState("");
-  const [isError, setError] = useState(false);
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const valueTrimmed = e.target.value.trimStart();

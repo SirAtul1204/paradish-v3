@@ -1,5 +1,5 @@
 import { betterFetch } from "@better-fetch/fetch";
-import { NextRequest, NextResponse } from "next/server";
+import { type NextRequest, NextResponse } from "next/server";
 import type { auth } from "./lib/auth";
 import { ROUTES } from "./utils/constants";
 
@@ -19,7 +19,7 @@ export default async function authMiddleware(request: NextRequest) {
       baseURL: request.nextUrl.origin,
       headers: {
         //get the cookie from the request
-        cookie: request.headers.get("cookie") || "",
+        cookie: request.headers.get("cookie") ?? "",
       },
     },
   );

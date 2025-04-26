@@ -14,7 +14,6 @@ export const restaurantRouter = createTRPCRouter({
     )
     .mutation(async ({ input, ctx }) => {
       const userId = ctx.user.id;
-      console.log({ userId });
       const restaurantRecord = await ctx.db
         .insert(restaurant)
         .values({
@@ -22,7 +21,7 @@ export const restaurantRouter = createTRPCRouter({
         })
         .returning();
       await ctx.db.insert(userRestaurant).values({
-        userId: userId!,
+        userId: userId,
         restaurantId: restaurantRecord[0]!.id,
         role: "OWNER",
       });
@@ -31,7 +30,7 @@ export const restaurantRouter = createTRPCRouter({
   getAllByUser: protectedProcedure.query(async ({ ctx }) => {
     const userId = ctx.user.id;
     const restaurants = await ctx.db.query.userRestaurant.findMany({
-      where: eq(userRestaurant.userId, userId!),
+      where: eq(userRestaurant.userId, userId),
       with: {
         restaurant: true,
       },
