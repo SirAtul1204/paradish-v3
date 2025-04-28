@@ -13,7 +13,7 @@ const Card = ({ restaurant }: { restaurant: Restaurant }) => {
   return (
     <Link
       className="bg-surface border-border hover:border-primary flex h-56 w-56 cursor-pointer items-center justify-center border"
-      href="#"
+      href={ROUTES.DASHBOARD(String(restaurant.id))}
     >
       {restaurant.name}
     </Link>
@@ -28,7 +28,7 @@ export default async function SelectRestaurant() {
   }
 
   if (restaurants.length === 1) {
-    redirect(ROUTES.DASHBOARD);
+    redirect(ROUTES.DASHBOARD(String(restaurants[0]!.restaurantId)));
   }
 
   return (

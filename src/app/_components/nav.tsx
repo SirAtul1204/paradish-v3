@@ -2,18 +2,23 @@
 import Link from "next/link";
 import Switch from "./switch";
 import { usePathname, useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { authClient } from "~/lib/auth-client";
-import type { Nullable } from "~/utils/types";
 import clsx from "clsx";
+import { api } from "~/trpc/react";
 
 const Nav = () => {
   const router = useRouter();
   const pathname = usePathname();
   const { data } = authClient.useSession();
-
-  const [name, setName] = useState<Nullable<string>>(null);
   const [profileOpen, setProfileOpen] = useState(false);
+
+  const selectedRestaurant = api.restaurant.doesUserBelongToRestaurant.useQuery(
+    {
+      restaurantId: parseInt(pathname.split("/")[1]!),
+    },
+    { enabled: false },
+  );
 
   const handleSignOut = async () => {
     await authClient.signOut({
@@ -25,6 +30,12 @@ const Nav = () => {
     });
   };
 
+  useEffect(() => {
+    if (pathname?.split("/")?.[1]) {
+      void selectedRestaurant.refetch();
+    }
+  }, [pathname]);
+
   return (
     <div>
       <div className="flex items-center justify-between p-4">
@@ -32,10 +43,14 @@ const Nav = () => {
           href="/"
           className="text-primary flex cursor-pointer items-center justify-center gap-2 text-xl font-medium"
         >
-          <img src="/logo_sm.png" className="h-8 w-8" />
+          <img src="/logo_sm.png" className="h-8 w-8" alt="paradish_logo" />
           Paradish
         </Link>
-        {name && <div>{name}</div>}
+        {selectedRestaurant.isSuccess && (
+          <p className="text-primary-text text-center text-xl">
+            {selectedRestaurant.data.restaurant.restaurant.name}
+          </p>
+        )}
         <div className="flex items-center justify-center gap-4">
           <Switch />
 

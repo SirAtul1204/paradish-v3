@@ -1,7 +1,7 @@
 "use client";
 
 import { QueryClientProvider, type QueryClient } from "@tanstack/react-query";
-import { httpBatchStreamLink, loggerLink } from "@trpc/client";
+import { httpBatchStreamLink, loggerLink, retryLink } from "@trpc/client";
 import { createTRPCReact } from "@trpc/react-query";
 import { type inferRouterInputs, type inferRouterOutputs } from "@trpc/server";
 import { useState } from "react";
@@ -56,6 +56,23 @@ export function TRPCReactProvider(props: { children: React.ReactNode }) {
             const headers = new Headers();
             headers.set("x-trpc-source", "nextjs-react");
             return headers;
+          },
+        }),
+        retryLink({
+          retry(opts) {
+            if (
+              opts.error.data &&
+              opts.error.data.code !== "INTERNAL_SERVER_ERROR"
+            ) {
+              // Don't retry on non-500s
+              return false;
+            }
+            if (opts.op.type !== "query") {
+              // Only retry queries
+              return false;
+            }
+            // Retry up to 3 times
+            return opts.attempts <= 3;
           },
         }),
       ],

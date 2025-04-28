@@ -3,5 +3,5 @@ export const ROUTES = {
   REGISTER: "/register",
   JOIN_CREATE_RESTAURANT: "/join-create-restaurant",
   SELECT_RESTAURANT: "/select-restaurant",
-  DASHBOARD: "/dashboard",
+  DASHBOARD: (id: string) => `/${id}/dashboard`,
 };

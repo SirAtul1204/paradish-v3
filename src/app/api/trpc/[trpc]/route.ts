@@ -3,7 +3,6 @@ import { type NextRequest } from "next/server";
 
 import { appRouter } from "~/server/api/root";
 import { createTRPCContext } from "~/server/api/trpc";
-import { RedirectError } from "~/utils/types";
 
 /**
  * This wraps the `createTRPCContext` helper and provides the required context for the tRPC API when
@@ -21,19 +20,19 @@ const handler = (req: NextRequest) =>
     req,
     router: appRouter,
     createContext: () => createContext(req),
-    onError(opts) {
-      const { error } = opts;
-      console.log("is it", error instanceof RedirectError);
-      return undefined;
-    },
-    // onError:
-    //   env.NODE_ENV === "development"
-    //     ? ({ path, error }) => {
-    //         console.error(
-    //           `❌ tRPC failed on ${path ?? "<no-path>"}: ${error.message}`
-    //         );
-    //       }
-    //     : undefined,
+    // onError(opts) {
+    //   const { error } = opts;
+    //   console.log("is it", error instanceof RedirectError);
+    //   return error;
+    // },
+    onError: undefined,
+    // env.NODE_ENV === "development"
+    //   ? ({ path, error }) => {
+    //       console.log(
+    //         `❌ tRPC failed on ${path ?? "<no-path>"}: ${error.message}`,
+    //       );
+    //     }
+    //   : undefined,
   });
 
 export { handler as GET, handler as POST };

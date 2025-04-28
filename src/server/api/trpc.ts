@@ -7,11 +7,13 @@
  * need to use are documented accordingly near the end.
  */
 import { initTRPC, TRPCError } from "@trpc/server";
+import { and, eq } from "drizzle-orm";
 import superjson from "superjson";
 import { ZodError } from "zod";
 import { auth } from "~/lib/auth";
 
 import { db } from "~/server/db";
+import { userRestaurant } from "../db/schema";
 
 /**
  * 1. CONTEXT
@@ -25,6 +27,7 @@ import { db } from "~/server/db";
  *
  * @see https://trpc.io/docs/server/context
  */
+
 export const createTRPCContext = async (opts: { headers: Headers }) => {
   const authSession = await auth.api.getSession({
     headers: opts.headers,
@@ -37,6 +40,8 @@ export const createTRPCContext = async (opts: { headers: Headers }) => {
   };
 };
 
+export type Context = Awaited<ReturnType<typeof createTRPCContext>>;
+
 /**
  * 2. INITIALIZATION
  *
@@ -44,7 +49,7 @@ export const createTRPCContext = async (opts: { headers: Headers }) => {
  * ZodErrors so that you get typesafety on the frontend if your procedure fails due to validation
  * errors on the backend.
  */
-const t = initTRPC.context<typeof createTRPCContext>().create({
+const t = initTRPC.context<Context>().create({
   transformer: superjson,
   errorFormatter({ shape, error }) {
     return {
@@ -109,15 +114,50 @@ const timingMiddleware = t.middleware(async ({ next, path }) => {
  * guarantee that a user querying is authorized, but you can still access user session data if they
  * are logged in.
  */
-export const publicProcedure = t.procedure.use(timingMiddleware);
+export const publicProcedure = t.procedure;
 
 export const protectedProcedure = t.procedure.use(({ ctx, next }) => {
   if (!ctx.user?.id) {
     throw new TRPCError({ code: "UNAUTHORIZED" });
   }
+
   return next({
     ctx: {
       user: ctx.user,
     },
   });
 });
+
+import { z } from "zod";
+
+export const protectedRestaurantProcedure = protectedProcedure
+  .input(
+    z.object({
+      restaurantId: z.number(),
+    }),
+  )
+  .use(async ({ ctx, next, input }) => {
+    if (!input.restaurantId) {
+      throw new TRPCError({ code: "BAD_REQUEST" });
+    }
+
+    const restaurant = await ctx.db.query.userRestaurant.findFirst({
+      where: and(
+        eq(userRestaurant.userId, ctx.user.id),
+        eq(userRestaurant.restaurantId, input.restaurantId),
+      ),
+      with: {
+        restaurant: true,
+      },
+    });
+
+    if (!restaurant) {
+      throw new TRPCError({ code: "BAD_REQUEST" });
+    }
+
+    return next({
+      ctx: {
+        restaurant,
+      },
+    });
+  });

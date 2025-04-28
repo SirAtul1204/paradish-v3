@@ -18,21 +18,21 @@ const BasicRegister = () => {
   const loginWithGoogle = async () => {
     const data = await authClient.signIn.social({
       provider: "google",
-      callbackURL: ROUTES.JOIN_CREATE_RESTAURANT,
+      callbackURL: ROUTES.SELECT_RESTAURANT,
     });
   };
 
   const loginWithGithub = async () => {
     const data = await authClient.signIn.social({
       provider: "github",
-      callbackURL: ROUTES.JOIN_CREATE_RESTAURANT,
+      callbackURL: ROUTES.SELECT_RESTAURANT,
     });
   };
 
   const loginWithMicrosoft = async () => {
     const data = await authClient.signIn.social({
       provider: "microsoft",
-      callbackURL: ROUTES.JOIN_CREATE_RESTAURANT,
+      callbackURL: ROUTES.SELECT_RESTAURANT,
     });
   };
 

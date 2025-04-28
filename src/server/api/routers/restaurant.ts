@@ -1,7 +1,11 @@
 import { eq } from "drizzle-orm";
 import { z } from "zod";
 
-import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
+import {
+  createTRPCRouter,
+  protectedProcedure,
+  protectedRestaurantProcedure,
+} from "~/server/api/trpc";
 import { restaurant, userRestaurant } from "~/server/db/schema";
 
 export const restaurantRouter = createTRPCRouter({
@@ -38,4 +42,7 @@ export const restaurantRouter = createTRPCRouter({
 
     return restaurants;
   }),
+  doesUserBelongToRestaurant: protectedRestaurantProcedure.query(({ ctx }) => ({
+    restaurant: ctx.restaurant,
+  })),
 });
