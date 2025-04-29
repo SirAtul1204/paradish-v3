@@ -6,7 +6,7 @@ import {
   protectedProcedure,
   protectedRestaurantProcedure,
 } from "~/server/api/trpc";
-import { restaurant, userRestaurant } from "~/server/db/schema";
+import { restaurant, employee } from "~/server/db/schema";
 
 export const restaurantRouter = createTRPCRouter({
   create: protectedProcedure
@@ -24,7 +24,7 @@ export const restaurantRouter = createTRPCRouter({
           ...input,
         })
         .returning();
-      await ctx.db.insert(userRestaurant).values({
+      await ctx.db.insert(employee).values({
         userId: userId,
         restaurantId: restaurantRecord[0]!.id,
         role: "OWNER",
@@ -33,8 +33,8 @@ export const restaurantRouter = createTRPCRouter({
     }),
   getAllByUser: protectedProcedure.query(async ({ ctx }) => {
     const userId = ctx.user.id;
-    const restaurants = await ctx.db.query.userRestaurant.findMany({
-      where: eq(userRestaurant.userId, userId),
+    const restaurants = await ctx.db.query.employee.findMany({
+      where: eq(employee.userId, userId),
       with: {
         restaurant: true,
       },
@@ -43,6 +43,6 @@ export const restaurantRouter = createTRPCRouter({
     return restaurants;
   }),
   doesUserBelongToRestaurant: protectedRestaurantProcedure.query(({ ctx }) => ({
-    restaurant: ctx.restaurant,
+    employee: ctx.employee,
   })),
 });

@@ -1,3 +1,4 @@
+import { generateId } from "better-auth";
 import { relations } from "drizzle-orm";
 import {
   pgTable,
@@ -5,6 +6,7 @@ import {
   integer,
   timestamp,
   boolean,
+  decimal,
 } from "drizzle-orm/pg-core";
 
 export const user = pgTable("user", {
@@ -63,7 +65,7 @@ export const restaurant = pgTable("restaurant", {
   address: text().notNull(),
 });
 
-export const userRestaurant = pgTable("user_restaurant", {
+export const employee = pgTable("user_restaurant", {
   userId: text("user_id")
     .notNull()
     .references(() => user.id),
@@ -71,23 +73,30 @@ export const userRestaurant = pgTable("user_restaurant", {
     .notNull()
     .references(() => restaurant.id, { onDelete: "cascade" }),
   role: text("role", { enum: ["OWNER"] }).notNull(),
+  joinedAt: timestamp("joinedAt").notNull().defaultNow(),
+  payPerMonth: decimal(),
+  employeeId: text("employee_id")
+    .primaryKey()
+    .$defaultFn(() => generateId(5)),
+  image: text(),
+  identification: text(),
 });
 
 export const userRelations = relations(user, ({ many }) => ({
-  userRestaurant: many(userRestaurant),
+  employee: many(employee),
 }));
 
 export const restaurantRelations = relations(restaurant, ({ many }) => ({
-  userRestaurant: many(userRestaurant),
+  employee: many(employee),
 }));
 
-export const userRestaurantRelations = relations(userRestaurant, ({ one }) => ({
+export const employeeRelations = relations(employee, ({ one }) => ({
   user: one(user, {
-    fields: [userRestaurant.userId],
+    fields: [employee.userId],
     references: [user.id],
   }),
   restaurant: one(restaurant, {
-    fields: [userRestaurant.restaurantId],
+    fields: [employee.restaurantId],
     references: [restaurant.id],
   }),
 }));

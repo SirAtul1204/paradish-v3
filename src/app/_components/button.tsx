@@ -5,6 +5,8 @@ import { SyncLoader } from "react-spinners";
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: "primary" | "secondary";
   isLoading?: boolean;
+  media?: string;
+  mediaPosition?: "right" | "left";
 }
 
 const Button: React.FC<ButtonProps> = ({
@@ -12,6 +14,8 @@ const Button: React.FC<ButtonProps> = ({
   children,
   className,
   isLoading,
+  media,
+  mediaPosition = "left",
   ...props
 }) => {
   const baseStyles =
@@ -33,8 +37,14 @@ const Button: React.FC<ButtonProps> = ({
       )}
       {...props}
     >
-      <div className="relative">
+      <div className="relative flex items-center justify-center gap-1">
+        {mediaPosition === "left" && media && (
+          <img src={media} className="h-5 w-5" alt="media" />
+        )}
         <span className="">{children}</span>
+        {mediaPosition === "right" && media && (
+          <img src={media} className="h-5 w-5" alt="media" />
+        )}
         {isLoading && (
           <div className="absolute top-1/2 right-0 -translate-y-1/2">
             <SyncLoader

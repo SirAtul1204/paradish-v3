@@ -13,7 +13,7 @@ import { ZodError } from "zod";
 import { auth } from "~/lib/auth";
 
 import { db } from "~/server/db";
-import { userRestaurant } from "../db/schema";
+import { employee } from "../db/schema";
 
 /**
  * 1. CONTEXT
@@ -141,23 +141,23 @@ export const protectedRestaurantProcedure = protectedProcedure
       throw new TRPCError({ code: "BAD_REQUEST" });
     }
 
-    const restaurant = await ctx.db.query.userRestaurant.findFirst({
+    const employeeRecord = await ctx.db.query.employee.findFirst({
       where: and(
-        eq(userRestaurant.userId, ctx.user.id),
-        eq(userRestaurant.restaurantId, input.restaurantId),
+        eq(employee.userId, ctx.user.id),
+        eq(employee.restaurantId, input.restaurantId),
       ),
       with: {
         restaurant: true,
       },
     });
 
-    if (!restaurant) {
+    if (!employeeRecord) {
       throw new TRPCError({ code: "BAD_REQUEST" });
     }
 
     return next({
       ctx: {
-        restaurant,
+        employee: employeeRecord,
       },
     });
   });

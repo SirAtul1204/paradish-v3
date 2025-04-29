@@ -27,7 +27,7 @@ export default function RootLayout({
       >
         <TRPCReactProvider>
           <Nav />
-          <div className="flex flex-grow items-center justify-center">
+          <div className="flex flex-grow items-center justify-center p-2">
             {children}
           </div>
           <ToastContainer stacked theme="dark" position="bottom-right" />

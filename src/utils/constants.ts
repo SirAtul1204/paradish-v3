@@ -4,4 +4,5 @@ export const ROUTES = {
   JOIN_CREATE_RESTAURANT: "/join-create-restaurant",
   SELECT_RESTAURANT: "/select-restaurant",
   DASHBOARD: (id: string) => `/${id}/dashboard`,
+  MANAGE_EMPLOYEES: (id: string) => `/${id}/manage-employees`,
 };

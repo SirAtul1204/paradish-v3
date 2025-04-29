@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import Switch from "./switch";
-import { usePathname, useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { authClient } from "~/lib/auth-client";
 import clsx from "clsx";
@@ -9,13 +9,13 @@ import { api } from "~/trpc/react";
 
 const Nav = () => {
   const router = useRouter();
-  const pathname = usePathname();
+  const params = useParams();
   const { data } = authClient.useSession();
   const [profileOpen, setProfileOpen] = useState(false);
 
   const selectedRestaurant = api.restaurant.doesUserBelongToRestaurant.useQuery(
     {
-      restaurantId: parseInt(pathname.split("/")[1]!),
+      restaurantId: parseInt(params.restaurantId! as string),
     },
     { enabled: false },
   );
@@ -31,10 +31,10 @@ const Nav = () => {
   };
 
   useEffect(() => {
-    if (pathname?.split("/")?.[1]) {
+    if (params?.restaurantId) {
       void selectedRestaurant.refetch();
     }
-  }, [pathname]);
+  }, [params]);
 
   return (
     <div>
@@ -48,7 +48,7 @@ const Nav = () => {
         </Link>
         {selectedRestaurant.isSuccess && (
           <p className="text-primary-text text-center text-xl">
-            {selectedRestaurant.data.restaurant.restaurant.name}
+            {selectedRestaurant.data.employee.restaurant.name}
           </p>
         )}
         <div className="flex items-center justify-center gap-4">
@@ -68,6 +68,7 @@ const Nav = () => {
                   className="outline-border h-6 w-6 rounded-full outline"
                   src={data.user.image}
                   alt="user-image"
+                  loading="lazy"
                 />
               </button>
               {profileOpen && (
