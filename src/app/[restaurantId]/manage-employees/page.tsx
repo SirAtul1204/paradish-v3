@@ -7,13 +7,21 @@ import {
   type TableOptions,
 } from "@tanstack/react-table";
 import { useParams } from "next/navigation";
+import { useState } from "react";
 import Button from "~/app/_components/button";
+import FormDropDown, {
+  type FormDropDownOptions,
+} from "~/app/_components/form-drop-down";
+import FormInput from "~/app/_components/form-input";
 import Loader from "~/app/_components/loader";
+import Modal from "~/app/_components/modal";
+import useFormInput from "~/lib/hooks/useFormInput";
 import { api } from "~/trpc/react";
+import type { Role } from "~/utils/types";
 
 type Employee = {
   image: string | null;
-  role: "OWNER";
+  role: Role;
   joinedAt: Date;
   payPerMonth: string | null;
   employeeId: string;
@@ -96,9 +104,32 @@ export default function ManageEmployees() {
     restaurantId: parseInt(restaurantId),
   });
 
+  const [isModalOpen, setModalOpen] = useState(true);
+
+  const roleInput = useFormInput();
+
   const openAddEmployeeModal = () => {
-    //TOOD
+    setModalOpen(true);
   };
+
+  const closeAddEmployeeModal = () => {
+    setModalOpen(false);
+  };
+
+  const roleOptions: FormDropDownOptions[] = [
+    {
+      label: "Owner",
+      value: "OWNER",
+    },
+    {
+      label: "Manager",
+      value: "MANAGER",
+    },
+    {
+      label: "Waiter",
+      value: "WAITER",
+    },
+  ];
 
   if (isPending) {
     return <Loader />;
@@ -117,11 +148,30 @@ export default function ManageEmployees() {
         </Button>
       </div>
       <Table employees={data.employees} />
-      <div className="absolute top-1/2 left-1/2 flex h-full w-full -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-md backdrop-blur-xs">
-        <div className="bg-surface border-border w-4/5 rounded-md border p-4">
-          Hello world
-        </div>
-      </div>
+      <Modal
+        isOpen={isModalOpen}
+        onClose={closeAddEmployeeModal}
+        heading="Add employee details"
+      >
+        <form className="flex w-96 flex-col gap-4">
+          <FormInput
+            label="Email address"
+            required
+            type="email"
+            errorMessage="Enter email"
+          />
+          <FormDropDown
+            label="Role"
+            options={roleOptions}
+            value={roleInput.val}
+            onChange={roleInput.changeHandler}
+            onBlur={roleInput.blurHandler}
+            errorMessage="Select a role"
+            required
+          />
+          <Button type="submit">Submit</Button>
+        </form>
+      </Modal>
     </div>
   );
 }

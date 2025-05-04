@@ -15,3 +15,5 @@ export class RedirectError {
     this.path = path;
   }
 }
+
+export type Role = "OWNER" | "MANAGER" | "WAITER";

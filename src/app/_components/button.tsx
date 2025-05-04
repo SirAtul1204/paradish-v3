@@ -2,12 +2,23 @@ import type { ButtonHTMLAttributes } from "react";
 import clsx from "clsx";
 import { SyncLoader } from "react-spinners";
 
-interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+type ButtonProps = {
   variant?: "primary" | "secondary";
+  className?: string;
+  children: React.ReactNode;
   isLoading?: boolean;
-  media?: string;
   mediaPosition?: "right" | "left";
-}
+} & ButtonHTMLAttributes<HTMLButtonElement> &
+  (
+    | {
+        media?: string;
+        mediaOnly?: false;
+      }
+    | {
+        mediaOnly: true;
+        media: string;
+      }
+  );
 
 const Button: React.FC<ButtonProps> = ({
   variant = "primary",
@@ -16,10 +27,11 @@ const Button: React.FC<ButtonProps> = ({
   isLoading,
   media,
   mediaPosition = "left",
+  mediaOnly,
   ...props
 }) => {
   const baseStyles =
-    "px-4 py-2 rounded-md font-medium transition-colors duration-200 text-center cursor-pointer hover:opacity-90";
+    " rounded-md font-medium transition-colors duration-200 text-center cursor-pointer hover:opacity-90";
 
   const variants: Record<NonNullable<ButtonProps["variant"]>, string> = {
     primary: "bg-primary text-btn-primary-text",
@@ -30,6 +42,7 @@ const Button: React.FC<ButtonProps> = ({
     <button
       className={clsx(
         baseStyles,
+        mediaOnly ? "p-1" : "px-4 py-2",
         props.disabled
           ? "bg-btn-disabled-bg text-btn-disabled-text"
           : variants[variant],
@@ -41,7 +54,7 @@ const Button: React.FC<ButtonProps> = ({
         {mediaPosition === "left" && media && (
           <img src={media} className="h-5 w-5" alt="media" />
         )}
-        <span className="">{children}</span>
+        {!mediaOnly && <span>{children}</span>}
         {mediaPosition === "right" && media && (
           <img src={media} className="h-5 w-5" alt="media" />
         )}

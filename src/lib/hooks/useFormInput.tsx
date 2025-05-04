@@ -1,9 +1,11 @@
 import { useState, type ChangeEvent } from "react";
 
-export default function useFormInput() {
+export default function useFormInput<
+  T extends HTMLInputElement | HTMLSelectElement,
+>() {
   const [val, setVal] = useState("");
 
-  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (e: ChangeEvent<T>) => {
     const valueTrimmed = e.target.value.trimStart();
     setVal(valueTrimmed);
   };

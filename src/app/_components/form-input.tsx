@@ -1,3 +1,4 @@
+import clsx from "clsx";
 import { useState, type FormEvent, type InputHTMLAttributes } from "react";
 
 interface FormInputProps extends InputHTMLAttributes<HTMLInputElement> {
@@ -7,7 +8,7 @@ interface FormInputProps extends InputHTMLAttributes<HTMLInputElement> {
 }
 
 const FormInput = ({ label, errorMessage, ...inputProps }: FormInputProps) => {
-  const id = label.toLowerCase().replace(/ /g, "-");
+  const id = label.toLowerCase().replace(/\s/g, "-");
 
   const [showError, setShowError] = useState(false);
 
@@ -29,7 +30,10 @@ const FormInput = ({ label, errorMessage, ...inputProps }: FormInputProps) => {
       <input
         id={id}
         placeholder={label}
-        className={`border-border focus:border-primary bg-background rounded border-2 p-2 outline-none`}
+        className={clsx(
+          `focus:border-primary bg-background h-12 rounded border-2 p-2 outline-none`,
+          showError ? "border-error" : "border-border",
+        )}
         title={errorMessage}
         onInvalid={handleInvalid}
         onInput={handleInput}

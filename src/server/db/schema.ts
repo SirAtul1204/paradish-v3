@@ -7,7 +7,10 @@ import {
   timestamp,
   boolean,
   decimal,
+  pgEnum,
 } from "drizzle-orm/pg-core";
+
+export const roleEnum = pgEnum("role", ["OWNER", "MANAGER", "WAITER"]);
 
 export const user = pgTable("user", {
   id: text("id").primaryKey(),
@@ -32,6 +35,13 @@ export const session = pgTable("session", {
     .references(() => user.id),
 });
 
+// export const sessionRelations = relations(session, ({ one }) => ({
+//   user: one(user, {
+//     fields: [session.userId],
+//     references: [user.id],
+//   }),
+// }));
+
 export const account = pgTable("account", {
   id: text("id").primaryKey(),
   accountId: text("account_id").notNull(),
@@ -49,6 +59,13 @@ export const account = pgTable("account", {
   createdAt: timestamp("created_at").notNull(),
   updatedAt: timestamp("updated_at").notNull(),
 });
+
+// export const accountRelations = relations(account, ({ one }) => ({
+//   user: one(user, {
+//     fields: [account.userId],
+//     references: [user.id],
+//   }),
+// }));
 
 export const verification = pgTable("verification", {
   id: text("id").primaryKey(),
@@ -72,7 +89,7 @@ export const employee = pgTable("user_restaurant", {
   restaurantId: integer("restaurant_id")
     .notNull()
     .references(() => restaurant.id, { onDelete: "cascade" }),
-  role: text("role", { enum: ["OWNER"] }).notNull(),
+  role: roleEnum().notNull(),
   joinedAt: timestamp("joinedAt").notNull().defaultNow(),
   payPerMonth: decimal(),
   employeeId: text("employee_id")
@@ -84,13 +101,15 @@ export const employee = pgTable("user_restaurant", {
 
 export const userRelations = relations(user, ({ many }) => ({
   employee: many(employee),
+  // accounts: many(account),
+  // sessions: many(session),
 }));
 
 export const restaurantRelations = relations(restaurant, ({ many }) => ({
   employee: many(employee),
 }));
 
-export const employeeRelations = relations(employee, ({ one }) => ({
+export const employeeRelations = relations(employee, ({ one, many }) => ({
   user: one(user, {
     fields: [employee.userId],
     references: [user.id],
@@ -99,4 +118,24 @@ export const employeeRelations = relations(employee, ({ one }) => ({
     fields: [employee.restaurantId],
     references: [restaurant.id],
   }),
+  employeeInvitations: many(employeeInvitation),
 }));
+
+export const employeeInvitation = pgTable("employee_invitation", {
+  invitedBy: text("invited_by")
+    .notNull()
+    .references(() => employee.employeeId, { onDelete: "cascade" }),
+  id: integer().primaryKey().generatedByDefaultAsIdentity(),
+  email: text().notNull(),
+  role: roleEnum().notNull(),
+});
+
+export const employeeInvitationRelations = relations(
+  employeeInvitation,
+  ({ one }) => ({
+    employee: one(employee, {
+      fields: [employeeInvitation.invitedBy],
+      references: [employee.employeeId],
+    }),
+  }),
+);
