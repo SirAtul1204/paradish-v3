@@ -1,6 +1,6 @@
 name: Apply schema migrations
 
-# 👉 Only run this workflow when a change is made to the main branch
+# 👉 Only run this workflow when a change is made to the prime branch
 on:
   push:
     branches:
@@ -21,8 +21,6 @@ jobs:
           touch .env
           echo DATABASE_URL={{secrets.DATABASE_URL}} >> .env
       - name: Apply migrations
-        run: |
-          drizzle-kit generate
-          drizzle-kit migrate
+        run: drizzle-kit migrate
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}

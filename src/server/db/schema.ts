@@ -35,13 +35,6 @@ export const session = pgTable("session", {
     .references(() => user.id),
 });
 
-// export const sessionRelations = relations(session, ({ one }) => ({
-//   user: one(user, {
-//     fields: [session.userId],
-//     references: [user.id],
-//   }),
-// }));
-
 export const account = pgTable("account", {
   id: text("id").primaryKey(),
   accountId: text("account_id").notNull(),
@@ -60,13 +53,6 @@ export const account = pgTable("account", {
   updatedAt: timestamp("updated_at").notNull(),
 });
 
-// export const accountRelations = relations(account, ({ one }) => ({
-//   user: one(user, {
-//     fields: [account.userId],
-//     references: [user.id],
-//   }),
-// }));
-
 export const verification = pgTable("verification", {
   id: text("id").primaryKey(),
   identifier: text("identifier").notNull(),
@@ -82,7 +68,7 @@ export const restaurant = pgTable("restaurant", {
   address: text().notNull(),
 });
 
-export const employee = pgTable("user_restaurant", {
+export const employee = pgTable("employee", {
   userId: text("user_id")
     .notNull()
     .references(() => user.id),
@@ -101,8 +87,6 @@ export const employee = pgTable("user_restaurant", {
 
 export const userRelations = relations(user, ({ many }) => ({
   employee: many(employee),
-  // accounts: many(account),
-  // sessions: many(session),
 }));
 
 export const restaurantRelations = relations(restaurant, ({ many }) => ({
@@ -128,6 +112,7 @@ export const employeeInvitation = pgTable("employee_invitation", {
   id: integer().primaryKey().generatedByDefaultAsIdentity(),
   email: text().notNull(),
   role: roleEnum().notNull(),
+  identification: text().notNull(),
 });
 
 export const employeeInvitationRelations = relations(
